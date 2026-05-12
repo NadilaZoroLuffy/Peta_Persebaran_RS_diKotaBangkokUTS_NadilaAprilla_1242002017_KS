@@ -69,10 +69,10 @@
       label: 'Dark Detail',
       layers: [
         {
-          url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth_dark/{z}/{x}/{y}{r}.png',
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           options: {
             maxZoom: 20,
-            attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+            attribution: '&copy; OpenStreetMap contributors'
           }
         }
       ],
@@ -82,10 +82,10 @@
       label: 'Light Detail',
       layers: [
         {
-          url: 'https://tiles.stadiamaps.com/tiles/alidade_smooth/{z}/{x}/{y}{r}.png',
+          url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
           options: {
             maxZoom: 20,
-            attribution: '&copy; <a href="https://stadiamaps.com/">Stadia Maps</a> &copy; <a href="https://openmaptiles.org/">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OSM</a>',
+            attribution: '&copy; OpenStreetMap contributors'
           }
         }
       ],
