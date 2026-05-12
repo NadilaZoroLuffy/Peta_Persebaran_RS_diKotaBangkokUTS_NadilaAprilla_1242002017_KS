@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>WebGIS — Persebaran Rumah Sakit Bangkok</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css"/>
+  <!-- MarkerCluster -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/MarkerCluster.Default.css"/>
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <!-- App CSS -->
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════ TOPBAR ══ -->
+  <header id="topbar">
+
+    <div class="topbar-brand">
+      <div class="brand-icon">🏥</div>
+      <div>
+        <div class="brand-title">WebGIS Bangkok</div>
+        <div class="brand-sub">Persebaran Rumah Sakit</div>
+      </div>
+    </div>
+
+    <div class="topbar-divider"></div>
+
+    <!-- Search -->
+    <div id="search-bar">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/>
+      </svg>
+      <input id="search-input" type="text" placeholder="Cari nama RS atau distrik…"/>
+      <button id="search-clear" title="Hapus">✕</button>
+    </div>
+
+    <!-- Jenis Filter -->
+    <select id="jenis-filter" class="filter-select">
+      <option value="">Semua Jenis</option>
+      <option value="Rumah Sakit Umum Pemerintah">RS Umum Pemerintah</option>
+      <option value="Rumah Sakit Swasta">RS Swasta</option>
+      <option value="Rumah Sakit Swasta Internasional">RS Swasta Internasional</option>
+      <option value="Rumah Sakit Universitas">RS Universitas</option>
+      <option value="Rumah Sakit Militer">RS Militer</option>
+      <option value="Rumah Sakit Militer AU">RS Militer AU</option>
+      <option value="Rumah Sakit Kepolisian">RS Kepolisian</option>
+    </select>
+
+    <!-- Beds Slider -->
+    <div class="slider-group">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M3 12h18M3 6h18M3 18h18"/>
+      </svg>
+      <span>Min Beds</span>
+      <input type="range" id="beds-slider" min="200" max="2300" value="200" step="50"/>
+      <span id="beds-val">200+</span>
+    </div>
+
+    <!-- Basemap Switcher -->
+    <div id="basemap-switcher">
+      <button class="bmap-btn active" data-map="dark" title="Dark Detail">
+        <span class="bmap-preview bmap-dark"></span>
+        <span>Dark</span>
+      </button>
+      <button class="bmap-btn" data-map="light" title="Light Detail">
+        <span class="bmap-preview bmap-light"></span>
+        <span>Light</span>
+      </button>
+      <button class="bmap-btn" data-map="satellite" title="Satellite">
+        <span class="bmap-preview bmap-satellite"></span>
+        <span>Satellite</span>
+      </button>
+      <button class="bmap-btn" data-map="topo" title="Topografi">
+        <span class="bmap-preview bmap-topo"></span>
+        <span>Topo</span>
+      </button>
+    </div>
+
+    <!-- Sidebar Toggle -->
+    <button id="sidebar-toggle-btn" title="Toggle Sidebar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><path d="M15 3v18"/>
+      </svg>
+    </button>
+
+  </header>
+
+  <!-- ═══════════════════════════════════════ MAIN ══ -->
+  <div id="main">
+
+    <!-- MAP -->
+    <div id="map"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+
+      <!-- Legend -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">Legenda &amp; Layer Toggle</div>
+        <div id="legend-list"></div>
+      </div>
+
+      <!-- List header -->
+      <div class="sidebar-section" style="padding-bottom:8px;">
+        <div class="sidebar-section-title" style="margin-bottom:0;display:flex;justify-content:space-between;align-items:center;">
+          <span>Daftar Rumah Sakit</span>
+          <span id="list-count" class="list-count-badge"></span>
+        </div>
+      </div>
+
+      <!-- Hospital list -->
+      <div id="hospital-list"></div>
+
+    </aside>
+  </div>
+
+  <!-- ═══════════════════════════════════════ FOOTER ══ -->
+  <footer id="footer">
+    <div class="stat-item">
+      <div class="stat-dot"></div>
+      <span class="stat-label">Live</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Total RS</span>
+      <span class="stat-value" id="stat-total">—</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Ditampilkan</span>
+      <span class="stat-value" id="stat-shown">—</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Total Beds</span>
+      <span class="stat-value" id="stat-beds">—</span>
+    </div>
+    <div class="stat-item">
+      <span class="stat-label">Distrik</span>
+      <span class="stat-value" id="stat-districts">—</span>
+    </div>
+    <div class="footer-spacer"></div>
+    <div class="footer-credit">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+      </svg>
+      Nadila Aprilla 1242002017 SIF 62 UTS
+      Data GeoJASON Bangkok Thailand
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.markercluster/1.5.3/leaflet.markercluster.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
